@@ -35,7 +35,6 @@ public class JwtTokenProvider {
 	}
 
 	public String generateToken(final String userUuid, final ZonedDateTime issuedDateTime, final ZonedDateTime expiresDateTime) {
-
 		final Date issuedAt = new Date(issuedDateTime.getLong(ChronoField.INSTANT_SECONDS));
 		final Date expiresAt = new Date(expiresDateTime.getLong(ChronoField.INSTANT_SECONDS));
 

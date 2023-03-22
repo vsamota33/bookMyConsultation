@@ -29,30 +29,24 @@ public class AuthenticationService {
 	private PasswordCryptographyProvider passwordCryptographyProvider;
 
 	@Autowired
-	private UserService userService;
-
-	@Autowired
 	private AuthTokenService authTokenService;
 
 	@Autowired
 	private UserRepository userRepository;
 
-
 	@Transactional(propagation = Propagation.REQUIRED)
 	public AuthorizedUser authenticate(final String email, final String password) throws ApplicationException {
-
 		User user = userRepository.findByEmailId(email);
-		if (user == null) throw new AuthenticationFailedException(UserErrorCode.USR_002);
+		if (user == null) 
+			throw new AuthenticationFailedException(UserErrorCode.USR_002);
 
 		final String encryptedPassword = passwordCryptographyProvider.encrypt(password, user.getSalt());
 		if (!user.getPassword().equals(encryptedPassword)) {
-
 			throw new AuthenticationFailedException(UserErrorCode.USR_003);
 		}
 		UserAuthToken userAuthToken = authTokenService.issueToken(user);
+
 		return authorizedUser(user, userAuthToken);
-
-
 	}
 
 	private AuthorizedUser authorizedUser(final User user, final UserAuthToken userAuthToken) {

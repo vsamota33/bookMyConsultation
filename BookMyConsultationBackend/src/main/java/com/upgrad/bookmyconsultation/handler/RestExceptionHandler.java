@@ -20,6 +20,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.security.InvalidParameterException;
 
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -32,46 +33,48 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(AuthenticationFailedException.class)
 	public final ResponseEntity<ErrorResponse> handleAuthenticationFailedException(AuthenticationFailedException ex, WebRequest request) {
-		return new ResponseEntity(errorResponse(ex), UNAUTHORIZED);
+		return new ResponseEntity<>(errorResponse(ex), UNAUTHORIZED);
 	}
 
 	@ExceptionHandler(UnauthorizedException.class)
 	public final ResponseEntity<ErrorResponse> handleUnauthorizedException(UnauthorizedException ex, WebRequest request) {
-		return new ResponseEntity(errorResponse(ex), UNAUTHORIZED);
+		return new ResponseEntity<>(errorResponse(ex), UNAUTHORIZED);
 	}
 
 	@ExceptionHandler(AuthorizationFailedException.class)
 	public final ResponseEntity<ErrorResponse> handleAuthorizationFailedException(AuthorizationFailedException ex, WebRequest request) {
-		return new ResponseEntity(errorResponse(ex), FORBIDDEN);
+		return new ResponseEntity<>(errorResponse(ex), FORBIDDEN);
 	}
 
 	@ExceptionHandler(EntityNotFoundException.class)
 	public final ResponseEntity<ErrorResponse> handleEntityNotFoundException(EntityNotFoundException ex, WebRequest request) {
-		return new ResponseEntity(errorResponse(ex), NOT_FOUND);
+		return new ResponseEntity<>(errorResponse(ex), NOT_FOUND);
 	}
 
 	@ExceptionHandler(ApplicationException.class)
 	public final ResponseEntity<ErrorResponse> handleApplicationException(ApplicationException ex, WebRequest request) {
-		return new ResponseEntity(errorResponse(ex), UNPROCESSABLE_ENTITY);
+		return new ResponseEntity<>(errorResponse(ex), UNPROCESSABLE_ENTITY);
 	}
 
 	@ExceptionHandler(RestException.class)
 	public final ResponseEntity<ErrorResponse> handleRestException(RestException ex, WebRequest request) {
-		return new ResponseEntity(errorResponse(ex), UNPROCESSABLE_ENTITY);
+		return new ResponseEntity<>(errorResponse(ex), UNPROCESSABLE_ENTITY);
 	}
 
 	@ExceptionHandler(RuntimeException.class)
 	public final ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException ex, WebRequest request) {
-		return new ResponseEntity(errorResponse(ex), INTERNAL_SERVER_ERROR);
+		return new ResponseEntity<>(errorResponse(ex), INTERNAL_SERVER_ERROR);
 	}
 
 	@ExceptionHandler(InvalidInputException.class)
-	public ResponseEntity<ErrorResponse> handleInvalidInput(InvalidInputException e) {
-		return new ResponseEntity(errorResponse(e), HttpStatus.BAD_REQUEST);
+	public ResponseEntity<ErrorResponse> handleInvalidInput(InvalidInputException ex) {
+		return new ResponseEntity<>(errorResponse(ex), HttpStatus.BAD_REQUEST);
 	}
 
-
-	
+	@ExceptionHandler(SlotUnavailableException.class)
+	public ResponseEntity<ErrorResponse> handleSlotUnavailableException(SlotUnavailableException ex) {
+		return new ResponseEntity<>(errorResponse(ex), HttpStatus.BAD_REQUEST);
+	}
 	
 	//mark as ExceptionHandler for the class SlotUnavailableException
 	//create a method handleSlotUnavailableException with return type of ResponseEntity
@@ -100,13 +103,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 		return new ErrorResponse().code(GenericErrorCode.GEN_001.getCode()).message(message).rootCause(stringWriter.getBuffer().toString());
 	}
 
-	private ErrorResponse errorResponse(final InvalidInputException invalidInputException) {
-		invalidInputException.printStackTrace();
+	private ErrorResponse errorResponse(final InvalidInputException exc) {
+		exc.printStackTrace();
 
 		final StringWriter stringWriter = new StringWriter();
-		invalidInputException.printStackTrace(new PrintWriter(stringWriter));
+		exc.printStackTrace(new PrintWriter(stringWriter));
 
-		String message = invalidInputException.getMessage();
+		String message = exc.getMessage();
 		if (message == null) {
 			message = GenericErrorCode.GEN_001.getDefaultMessage();
 		}

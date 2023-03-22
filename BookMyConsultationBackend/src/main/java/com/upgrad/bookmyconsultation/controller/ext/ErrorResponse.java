@@ -2,11 +2,8 @@ package com.upgrad.bookmyconsultation.controller.ext;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
@@ -35,8 +32,6 @@ public class ErrorResponse   {
 	 **/
 	@ApiModelProperty(required = true, value = "Application specific standard error code")
 	@NotNull
-
-
 	public String getCode() {
 		return code;
 	}
@@ -56,8 +51,6 @@ public class ErrorResponse   {
 	 **/
 	@ApiModelProperty(required = true, value = "Error message stating the reason")
 	@NotNull
-
-
 	public String getMessage() {
 		return message;
 	}
@@ -76,8 +69,6 @@ public class ErrorResponse   {
 	 * @return rootCause
 	 **/
 	@ApiModelProperty(value = "Root cause of the Error")
-
-
 	public String getRootCause() {
 		return rootCause;
 	}

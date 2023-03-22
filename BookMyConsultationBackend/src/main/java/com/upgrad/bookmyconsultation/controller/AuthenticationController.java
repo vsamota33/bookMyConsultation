@@ -35,8 +35,10 @@ public class AuthenticationController {
 	@PostMapping(path = "/login")
 	public ResponseEntity<AuthorizedUser> login(@RequestHeader final String authorization) throws ApplicationException {
 		final BasicAuthDecoder basicAuthDecoder = new BasicAuthDecoder(authorization);
-		final AuthorizedUser authorizedUser = authenticationService.authenticate(basicAuthDecoder.getEmail(), basicAuthDecoder.getPassword());
-		return ResponseEntity.status(HttpStatus.OK).body(authorizedUser);
+		final AuthorizedUser authorizedUser = authenticationService.authenticate(
+				basicAuthDecoder.getEmail(), basicAuthDecoder.getPassword());
+
+		return new ResponseEntity<>(authorizedUser, HttpStatus.OK);
 	}
 
 	@PostMapping(path = "/logout")
@@ -44,6 +46,4 @@ public class AuthenticationController {
 		final BearerAuthDecoder authDecoder = new BearerAuthDecoder(authorization);
 		authTokenService.invalidateToken(authDecoder.getAccessToken());
 	}
-
-
 }

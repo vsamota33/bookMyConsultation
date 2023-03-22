@@ -16,6 +16,7 @@ public class WebConfiguration {
 
 	@Autowired
 	private AuthFilter authFilter;
+
 	@Bean
 	public FilterRegistrationBean authFilterRegistration() {
 		FilterRegistrationBean registration = new FilterRegistrationBean();
@@ -35,7 +36,6 @@ public class WebConfiguration {
 		registration.setOrder(0);
 		return registration;
 	}
-
 
 	@Bean
 	public FilterRegistrationBean reqContextFilterRegistration() {

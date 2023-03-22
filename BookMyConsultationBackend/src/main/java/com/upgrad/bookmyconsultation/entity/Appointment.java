@@ -18,6 +18,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Appointment {
+
 	@Id
 	private String appointmentId = UUID.randomUUID().toString();
 	private String doctorId;

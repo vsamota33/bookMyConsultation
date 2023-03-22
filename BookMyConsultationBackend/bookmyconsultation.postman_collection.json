@@ -353,15 +353,16 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/doctors/UUID-2",
+					"raw": "http://localhost:8080/api/actuator/health",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
-						"doctors",
-						"UUID-2"
+						"api",
+						"actuator",
+						"health"
 					]
 				}
 			},

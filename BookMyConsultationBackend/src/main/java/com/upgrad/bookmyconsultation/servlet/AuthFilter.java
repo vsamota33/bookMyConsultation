@@ -28,7 +28,6 @@ public class AuthFilter extends ApiFilter {
 
 	@Override
 	public void doFilter(HttpServletRequest servletRequest, HttpServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-
 		if (servletRequest.getMethod().equalsIgnoreCase("OPTIONS")) {
 			servletResponse.setStatus(HttpServletResponse.SC_ACCEPTED);
 			return;
@@ -37,13 +36,10 @@ public class AuthFilter extends ApiFilter {
 		final String pathInfo = servletRequest.getRequestURI();
 		if (!pathInfo.contains("register") && !pathInfo.contains("actuator") && !pathInfo.contains("doctors")) {
 			final String authorization = servletRequest.getHeader(HttpHeaders.AUTHORIZATION);
-			if (StringUtils.isEmpty(authorization)) {
+			if (StringUtils.isEmpty(authorization))
 				throw new UnauthorizedException(RestErrorCode.ATH_001);
-			}
-
-			if (pathInfo.contains("login") && !authorization.startsWith(BASIC_AUTH_PREFIX)) {
+			if (pathInfo.contains("login") && !authorization.startsWith(BASIC_AUTH_PREFIX))
 				throw new UnauthorizedException(RestErrorCode.ATH_002);
-			}
 
 			if (!pathInfo.contains("login")) {
 				final String accessToken = new BearerAuthDecoder(authorization).getAccessToken();
@@ -58,5 +54,4 @@ public class AuthFilter extends ApiFilter {
 		}
 		filterChain.doFilter(servletRequest, servletResponse);
 	}
-
 }

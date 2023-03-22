@@ -13,7 +13,6 @@ import com.upgrad.bookmyconsultation.exception.AuthorizationFailedException;
 import com.upgrad.bookmyconsultation.exception.UserErrorCode;
 import com.upgrad.bookmyconsultation.provider.token.JwtTokenProvider;
 import com.upgrad.bookmyconsultation.repository.UserAuthTokenRepository;
-import com.upgrad.bookmyconsultation.repository.UserRepository;
 import com.upgrad.bookmyconsultation.util.DateTimeProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,27 +27,22 @@ import java.time.ZonedDateTime;
 public class AuthTokenService {
 
 	@Autowired
-	private UserRepository userRepository;
-
-	@Autowired
 	private UserAuthTokenRepository userAuthDao;
-
 
 	@Transactional(propagation = Propagation.MANDATORY)
 	public UserAuthToken issueToken(final User user) {
-
 		final ZonedDateTime now = DateTimeProvider.currentProgramTime();
-
-		final UserAuthToken userAuthToken = userAuthDao.findByUserEmailId(user.getEmailId());
-		final UserAuthTokenVerifier tokenVerifier = new UserAuthTokenVerifier(userAuthToken);
-		if (tokenVerifier.isActive()) {
-			return userAuthToken;
+		final UserAuthToken userAuthToken = userAuthDao
+				.findByUserEmailIdAndLogoutAtIsNullAndExpiresAtIsAfter(user.getEmailId(), now);
+		if (userAuthToken != null) {
+			final UserAuthTokenVerifier tokenVerifier = new UserAuthTokenVerifier(userAuthToken);
+			if (tokenVerifier.isActive()) {
+				return userAuthToken;
+			}
 		}
-
 		final JwtTokenProvider tokenProvider = new JwtTokenProvider(user.getPassword());
 		final ZonedDateTime expiresAt = now.plusHours(8);
 		final String authToken = tokenProvider.generateToken(user.getEmailId(), now, expiresAt);
-		System.out.println(authToken);
 		final UserAuthToken authTokenEntity = new UserAuthToken();
 		authTokenEntity.setUser(user);
 		authTokenEntity.setAccessToken(authToken);
@@ -57,13 +51,11 @@ public class AuthTokenService {
 		userAuthDao.save(authTokenEntity);
 
 		return authTokenEntity;
-
 	}
 
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void invalidateToken(final String accessToken) throws AuthorizationFailedException {
-
 		final UserAuthToken userAuthToken = userAuthDao.findByAccessToken(accessToken);
 		final UserAuthTokenVerifier tokenVerifier = new UserAuthTokenVerifier(userAuthToken);
 		if (tokenVerifier.isNotFound()) {
@@ -90,4 +82,8 @@ public class AuthTokenService {
 		return userAuthToken;
 	}
 
+	public User getUserFromToken(String accessToken) {
+		UserAuthToken userAuthToken = userAuthDao.findByAccessToken(accessToken);
+		return userAuthToken.getUser();
+	}
 }

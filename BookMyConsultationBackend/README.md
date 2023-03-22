@@ -1,3 +1,4 @@
+
 # Project Title
 
 Book my consulting API serves backend services to manage doctors appointment. It has been built on Spring platform using spring-boot framework.
@@ -8,8 +9,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-You need following softwares before running this applic
-ation.
+You need following softwares before running this application.
 
 1. Java 8 SDK
 2. Apache Maven 3.3 build tool

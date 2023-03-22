@@ -8,6 +8,10 @@
 */
 package com.upgrad.bookmyconsultation.provider;
 
+import com.upgrad.bookmyconsultation.constants.ResourceConstants;
+
+import static com.upgrad.bookmyconsultation.constants.ResourceConstants.BASIC_AUTH_PREFIX;
+
 import java.util.Base64;
 
 /**
@@ -19,7 +23,9 @@ public final class BasicAuthDecoder {
     private final String password;
 
     public BasicAuthDecoder(final String base64EncodedCredentials) {
-        final String[] base64Decoded = new String(Base64.getDecoder().decode(base64EncodedCredentials.split("Basic ")[1])).split(":");
+        final String[] base64Decoded = new String(Base64.getDecoder()
+                .decode(base64EncodedCredentials.split(BASIC_AUTH_PREFIX)[1]))
+                .split(":");
         this.email = base64Decoded[0];
         this.password = base64Decoded[1];
     }

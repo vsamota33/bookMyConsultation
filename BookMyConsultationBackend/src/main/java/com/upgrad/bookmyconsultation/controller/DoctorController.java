@@ -7,6 +7,7 @@ import com.upgrad.bookmyconsultation.model.TimeSlot;
 import com.upgrad.bookmyconsultation.service.DoctorService;
 import com.upgrad.bookmyconsultation.util.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,38 +31,36 @@ public class DoctorController {
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Doctor> getDoctorDetails(@PathVariable String id) {
-		return ResponseEntity.ok(service.getDoctor(id));
+		return new ResponseEntity<>(service.getDoctor(id), HttpStatus.OK);
 	}
 
 	@GetMapping
 	public ResponseEntity<List<Doctor>> getAllDoctors(@RequestParam(value = "speciality", required = false) String speciality) {
-		return ResponseEntity.ok(service.getAllDoctorsWithFilters(speciality));
+		return new ResponseEntity<>(service.getAllDoctorsWithFilters(speciality), HttpStatus.OK);
 	}
 
 	@PostMapping
 	public ResponseEntity<Doctor> registerDoctor(@RequestBody Doctor doctor) throws InvalidInputException {
-		return ResponseEntity.ok(service.register(doctor));
+		return new ResponseEntity<>(service.register(doctor), HttpStatus.OK);
 	}
-
 
 	@GetMapping("/speciality")
 	public ResponseEntity<List<String>> getSpeciality() {
-		return ResponseEntity.ok(Stream.of(Speciality.values())
+		List<String> speciality = Stream.of(Speciality.values())
 				.map(Enum::name)
-				.collect(Collectors.toList()));
+				.collect(Collectors.toList());
+
+		return new ResponseEntity<>(speciality, HttpStatus.OK);
 	}
 
 	@GetMapping("/{doctorId}/timeSlots")
 	public ResponseEntity<TimeSlot> getTimeSlots(@RequestParam(value = "date", required = false) String date,
 	                                             @PathVariable String doctorId) {
-		if (!ValidationUtils.isValid(date)) {
+		if (!ValidationUtils.isValid(date))
 			throw new InvalidParameterException("Not a valid date");
-		}
+		if (service.getDoctor(doctorId) == null)
+			throw new InvalidParameterException("Not a valid doctor id");
 
-		if (service.getDoctor(doctorId) == null) throw new InvalidParameterException("Not a valid doctor id");
-
-		return ResponseEntity.ok(service.getTimeSlots(doctorId, date));
+		return new ResponseEntity<>(service.getTimeSlots(doctorId, date), HttpStatus.OK);
 	}
-
-
 }

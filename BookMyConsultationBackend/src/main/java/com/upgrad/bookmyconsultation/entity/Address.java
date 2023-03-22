@@ -10,6 +10,7 @@ import javax.persistence.Id;
 @Entity
 @NoArgsConstructor
 public class Address {
+
 	@Id
 	private String id;
 	private String addressLine1;

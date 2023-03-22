@@ -21,11 +21,9 @@ public class ValidationUtils {
 		if (user.getEmailId() == null || !user.getEmailId().matches("^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")) {
 			errorFields.add("Email Id");
 		}
-
 		if (user.getMobile() == null || !user.getMobile().matches("^\\d{10}$")) {
 			errorFields.add("Mobile");
 		}
-
 		if (user.getFirstName() == null || !user.getFirstName().matches("^[a-zA-Z\\\\s]{1,10}$")) {
 			errorFields.add("First Name");
 		}
@@ -55,6 +53,9 @@ public class ValidationUtils {
 		if (doctor.getEmailId() == null || !doctor.getEmailId().matches("^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")) {
 			errorFields.add("Email Id");
 		}
+		if (doctor.getAddress() == null) {
+			errorFields.add("Address");
+		}
 		if (errorFields.size() > 0) throw new InvalidInputException(errorFields);
 	}
 
@@ -63,18 +64,15 @@ public class ValidationUtils {
 		if (StringUtils.isEmpty(appointment.getDoctorId())) {
 			errorFields.add("Doctor ID");
 		}
-
 		if (StringUtils.isEmpty(appointment.getUserId())) {
 			errorFields.add("User ID");
 		}
-
 		if (StringUtils.isEmpty(appointment.getTimeSlot())) {
 			errorFields.add("Time slot");
 		}
 		if (appointment.getAppointmentDate() == null || !isValid(appointment.getAppointmentDate())) {
 			errorFields.add("AppointmentDate");
 		}
-
 		if (errorFields.size() > 0) throw new InvalidInputException(errorFields);
 	}
 
